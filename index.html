@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>字数カウンター</title>
+    <style>
+        @import "https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css";
+
+        body {
+            text-align: center;
+        }
+
+        textarea {
+            display: block;
+            margin: 0 auto;
+        }
+
+        #inputText {
+            min-width: 50%;
+            max-width: 80%;
+        }
+
+        #output {
+            display: inline-block;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .numbers {
+            font-size: 10px;
+        }
+
+        table {
+            margin: 0 auto;
+        }
+
+        .character {
+            display: inline-block;
+            padding: 2px;
+            margin: 1px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .character span {
+            display: block;
+            font-size: 12px;
+            color: white;
+        }
+
+        .space {
+            display: inline-block;
+            background-color: red;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 1px;
+        }
+
+        .newline {
+            display: inline-block;
+            background-color: blueviolet;
+            width: 10px;
+            height: 10px;
+            border-radius: 25%;
+            margin: 1px;
+        }
+        .link{
+            font-size: 18px;
+            color: #3273dc;
+            position: relative;
+            top: -20px;
+        }
+    </style>
+</head>
+
+<body>
+    <br>
+    <h1 class="title">字数カウンター
+        <a href="https://github.com/gojiteji/characterCounter" class="link" target="_blank">
+            [i]
+        </a>    
+    </h1>
+    <textarea id="inputText" class="textarea is-small is-info" rows="10" cols="50"
+        oninput="countCharacters()"></textarea>
+    <br>
+    <div id="statistics"></div>
+    <br>
+    <div id="output"></div>
+
+    <script>
+        let characterColors = {};
+        window.onload = function () {
+            countCharacters();
+        };
+        function countCharacters() {
+            const inputText = document.getElementById('inputText').value;
+            const characters = inputText.split('');
+            let outputHTML = '';
+            let count = 1;
+            let nonSpaceCount = 0;
+            let spaceCount = 0;
+            let lineCount = 1;
+
+            characters.forEach(char => {
+                if (char === ' ' || char === '　') {
+                    outputHTML += '<div class="space"></div>';
+                    spaceCount++;
+                } else if (char === '\n') {
+                    outputHTML += '<div class="newline"></div>';
+                    lineCount++;
+                } else {
+                    if (!characterColors[char]) {
+                        characterColors[char] = getRandomColor();
+                    }
+                    const color = characterColors[char];
+                    outputHTML += `<div class="character" style="background-color: ${color};">${char}<span class="numbers">${count}</span></div>`;
+                    count++;
+                    nonSpaceCount++;
+                }
+            });
+
+            outputHTML += '<br><br>';
+
+            const statisticsHTML = `
+      <table class="table is-bordered is-striped is-narrow is-hoverable">
+        <tr>
+          <td>文字数</td>
+          <td>${inputText.length}</td>
+        </tr>
+        <tr>
+          <td>文字数（スペースなし）</td>
+            <td>${nonSpaceCount}</td>
+        </tr>
+        <tr>
+          <td>スペース数</td>
+          <td>${spaceCount}</td>
+        </tr>
+        <tr>
+          <td>行数</td>
+          <td>${lineCount}</td>
+        </tr>
+        </table>
+      `;
+
+            document.getElementById('output').innerHTML = outputHTML;
+            document.getElementById('statistics').innerHTML = statisticsHTML;
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    </script>
+</body>
+
+</html>
